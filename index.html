@@ -5,6 +5,7 @@
 		<title>D3: Setting path fills dynamically to generate a choropleth</title>
 		<script type="text/javascript" src="https://d3js.org/d3.v4.min.js"></script>
         <script src="https://d3js.org/d3-color.v1.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.js"></script>
         <script src="https://d3js.org/d3-interpolate.v1.min.js"></script>
         <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
 		<style type="text/css">
@@ -34,6 +35,13 @@
                 color: white;
             }
 
+            .label{
+                fill: white;
+            }
+            
+            .legendTitle{
+                fill: white;
+            }
 		</style>
 	</head>
 	<body>
@@ -74,9 +82,44 @@
             //Colors derived from ColorBrewer, by Cynthia Brewer, and included in
             //https://github.com/d3/d3-scale-chromatic
 
-            /*var color = d3//.scaleLinear()
-                        .scalePow().exponent(2)
-                        .range(["rgb(186,228,179)","rgb(0,109,44)"])*/
+            var popLegend = d3.scaleLinear()
+                  .range(["#fcbba1","#a50f15"]);
+            
+             var agLegend = d3.scaleLinear()
+                  .range(["#ccece6","#005824"]);
+
+            var svgLegend = d3.select("body")
+						      .append("svg")
+						      .attr("width", w)
+						      .attr("height", 80)
+                              .attr("transform", "translate(120,-20)");;
+
+            svgLegend.append("g")
+              .attr("class", "legendPop")
+              .attr("transform", "translate(320,20)");
+
+            var legendPop = d3.legendColor()
+              .shapeWidth(30)
+              .orient('horizontal')
+              .title('Population')
+              .scale(popLegend);
+
+            svgLegend.select(".legendPop")
+              .call(legendPop);
+            
+            svgLegend.append("g")
+              .attr("class", "legendAg")
+              .attr("transform", "translate(120,20)");
+
+            var legendAg = d3.legendColor()
+              .shapeWidth(30)
+              .orient('horizontal')
+              .title('Productivty')    
+              .scale(agLegend);
+
+            svgLegend.select(".legendAg")
+              .call(legendAg);
+            
             
 			//Create SVG element
 			var svg = d3.select("body")
@@ -90,6 +133,11 @@
 
                 //Set input domain for color scale
                 colorAg.domain([
+                    d3.min(data, function(d) { return d.productivity; }), 
+                    d3.max(data, function(d) { return d.productivity; })
+                ]);
+                
+                agLegend.domain([
                     d3.min(data, function(d) { return d.productivity; }), 
                     d3.max(data, function(d) { return d.productivity; })
                 ]);
