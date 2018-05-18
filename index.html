@@ -42,6 +42,13 @@
             .legendTitle{
                 fill: white;
             }
+            
+            .tooltip{
+                color: white;
+                transform: translate(900px,120px);
+                position: absolute;
+            }
+            
 		</style>
 	</head>
 	<body>
@@ -51,12 +58,21 @@
         <div class = "button-container">    
             <button class="button toggleData">Toggle Data</button>    
         </div>   
+        <div class = "tooltip">
+        
+            <h1 class = "state-title"></h1>
+            <h3 class = "tooltip-values population"></h3>
+            <h3 class = "tooltip-values productivity"></h3>
+        </div>
+        
 		<script type="text/javascript">
 
 			//Width and height
 			var w = 800;
 			var h = 400;
-
+            
+            var formatComma = d3.format(",");
+            
 			//Define map projection
 			var projection = d3.geoAlbersUsa()
 								   .translate([w/2, h/2])
@@ -74,7 +90,7 @@
 			
             //var colorPop = d3.scaleSequential(d3.interpolateReds)
 			
-            console.log(colorPop(4863300))
+            //console.log(colorPop(4863300))
             //var colorS = d3.scaleSequential(d3.interpolateOranges)
             
             var colorAg = d3.scaleQuantize()
@@ -199,7 +215,47 @@
                                 //If value is undefined…
                                 return "#ccc";
                             }
-                       });
+                       })
+                       .on("mouseover",function(d){
+                            var state = d.properties.name;
+                            var productivity = d.properties.productivity;
+                            var population = d.properties.population;
+                            //console.log(d3.select(this))
+                            /*d3.select(this)
+                                .style("fill", "yellow");
+                        */
+                            d3.select(".state-title").text(state);
+                            if (population){
+                                d3.select(".population").text("Population | " + formatComma(population));
+                            }
+                            if (productivity){
+                                d3.select(".productivity").text("Agricultural Productivity | " + productivity);
+                            }
+                        })
+                        .on("mouseout", function(d){
+                        
+                            /*d3.select(this)
+                                .style("fill", function(d) {
+                            //Get data value
+                                    var value = d.properties.productivity;
+
+                                    if (value) {
+                                        //If value exists…
+                                        return colorAg(value);
+                                    } else {
+                                        //If value is undefined…
+                                        return "#ccc";
+                                    }
+                                })
+                        */
+                            var state = d.properties.name;
+                            var productivity = d.properties.productivity;
+                            var population = d.properties.population;
+                            
+                            d3.select(".state-title").text("");
+                            d3.select(".population").text("");
+                            d3.select(".productivity").text("");
+                        });
                 });
 
             });
@@ -275,8 +331,33 @@
                         
                     }
 
-
-                 });
+                 })
+                /*.on("mouseover",function(d){
+                            var state = d.properties.name;
+                            var productivity = d.properties.productivity;
+                            var population = d.properties.population;
+                            //console.log(d3.select(this))
+                            d3.select(this)
+                                .style("fill", "yellow");
+                        
+                            d3.select(".state-title").text(state);
+                            if (population){
+                                d3.select(".population").text("Population: " + formatComma(population));
+                            }
+                            if (productivity){
+                                d3.select(".productivity").text("Agricultural Productivity: " + productivity);
+                            }
+                        })*/
+                .on("mouseout", function(d){
+                            
+                            var state = d.properties.name;
+                            var productivity = d.properties.productivity;
+                            var population = d.properties.population;
+                            
+                            d3.select(".state-title").text("");
+                            d3.select(".population").text("");
+                            d3.select(".productivity").text("");
+                        });;
 
         </script>
 	</body>
