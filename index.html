@@ -103,7 +103,7 @@
                 d3.json("us-states.json", function(json) {
 
                     //Merge the ag. data and GeoJSON
-                    //Loop through once for each ag. data value
+                    //Loop through once for each data value
                     for (var i = 0; i < data.length; i++) {
 
                         //Grab state name
@@ -134,6 +134,7 @@
                     console.log(json)
                     
                     //Bind data and create one path per GeoJSON feature
+                    //Default map(the view on page load) will be productivity data
                     svg.selectAll("path")
                        .data(json.features)
                        .enter()
@@ -155,8 +156,7 @@
 
             });
 
-
-            // Button Interactivity
+            // Defining Button Interactivity
             var togData = false;
              
             d3.select(".toggleData")
