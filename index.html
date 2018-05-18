@@ -99,7 +99,7 @@
               .attr("transform", "translate(320,20)");
 
             var legendPop = d3.legendColor()
-              .shapeWidth(30)
+              .shapeWidth(30).shapePadding(0)
               .orient('horizontal')
               .title('Population')
               .scale(popLegend);
@@ -112,7 +112,7 @@
               .attr("transform", "translate(120,20)");
 
             var legendAg = d3.legendColor()
-              .shapeWidth(30)
+              .shapeWidth(30).shapePadding(0)
               .orient('horizontal')
               .title('Productivty')    
               .scale(agLegend);
