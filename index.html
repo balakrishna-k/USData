@@ -37,6 +37,8 @@
 
             .label{
                 fill: white;
+                text-anchor: end;
+                transform: translate(-10px,20px);
             }
             
             .legendTitle{
@@ -45,8 +47,24 @@
             
             .tooltip{
                 color: white;
-                transform: translate(900px,120px);
+                transform: translate(950px,105px);
                 position: absolute;
+            }
+            
+            .svg-legends{
+                position: absolute;
+                transform: translate(700px,80px);
+            }
+            
+            .legendQuant{
+                width: 200px;
+                transform: translate(120px, 20px);
+            }
+            
+            .legendTitle{
+                transform: translate(30px,10px);
+                font-weight: bolder;
+                font-size: 18px;
             }
             
 		</style>
@@ -82,6 +100,55 @@
 			var path = d3.geoPath()
 							 .projection(projection);
 							 
+            //
+            
+            var svgLegend = d3.select("body")
+						      .append("svg").attr("class", "svg-legends")
+						      .attr("width", w)
+						      .attr("height", 180);
+                              //.attr("transform", "translate(120,-20)");
+            
+            //-------------------------------------------------------------------------------------------
+            
+            var populationLegend = d3.scaleThreshold()
+              .domain([100, 250, 750, 1250, 3500])
+              .range(["#fcbba1","#fc9272","#fb6a4a","#de2d26","#a50f15"]);
+
+        
+            svgLegend.append("g")
+              .attr("class", "legendQuant")
+              .attr("transform", "translate(20,20)");
+
+            var legend = d3.legendColor()
+                .labelFormat(d3.format(".0f")).shapePadding(-2).shapeHeight(30)
+                .labels(d3.legendHelpers.thresholdLabels).title('Population')
+                //.useClass(true)
+                .scale(populationLegend)
+
+            /*
+            ----legendHelpers.thresholdLabels----
+            function({
+              i,
+              genLength,
+              generatedLabels,
+              labelDelimiter
+            }) {
+              if (i === 0) {
+                const values = generatedLabels[i].split(` ${labelDelimiter} `)
+                return `Less than ${values[1]}`
+              } else if (i === genLength - 1) {
+                const values = generatedLabels[i].split(` ${labelDelimiter} `)
+                return `${values[0]} or more`
+              }
+              return generatedLabels[i]
+            }
+
+            */
+
+            svgLegend.select(".legendQuant")
+              .call(legend);
+            
+            //-------------------------------------------------------------------------------------------
 			//Define quantize scale to sort data values into buckets of color
 			
             var colorPop = d3.scaleQuantile()
@@ -104,13 +171,9 @@
              var agLegend = d3.scaleLinear()
                   .range(["#ccece6","#005824"]);
 
-            var svgLegend = d3.select("body")
-						      .append("svg")
-						      .attr("width", w)
-						      .attr("height", 80)
-                              .attr("transform", "translate(120,-20)");;
+            
 
-            svgLegend.append("g")
+            /*svgLegend.append("g")
               .attr("class", "legendPop")
               .attr("transform", "translate(320,20)");
 
@@ -135,7 +198,7 @@
 
             svgLegend.select(".legendAg")
               .call(legendAg);
-            
+            */
             
 			//Create SVG element
 			var svg = d3.select("body")
@@ -233,7 +296,6 @@
                             }
                         })
                         .on("mouseout", function(d){
-                        
                         
                             d3.select(this)
                                 .style("opacity", "0.6");
