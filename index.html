@@ -267,7 +267,7 @@
                 .on("click", function(){
                     // Determine if current line is visible
                     togData=!togData;
-                    console.log(togData);
+                    //console.log(togData);
 
                     if (togData == true){
                         svg.selectAll("path")
@@ -277,8 +277,8 @@
 
                                 if (value) {
                                     //If value exists…
-                                    console.log(colorPop(value))
-                                    console.log((value))
+                                    /*console.log(colorPop(value))
+                                    console.log((value))*/
                                     return colorPop(value);
                                 } else {
                                     //If value is undefined…
@@ -331,7 +331,7 @@
                         
                     }
 
-                 })
+                 });
                 /*.on("mouseover",function(d){
                             var state = d.properties.name;
                             var productivity = d.properties.productivity;
@@ -348,7 +348,7 @@
                                 d3.select(".productivity").text("Agricultural Productivity: " + productivity);
                             }
                         })*/
-                .on("mouseout", function(d){
+                /*.on("mouseout", function(d){
                             
                             var state = d.properties.name;
                             var productivity = d.properties.productivity;
@@ -357,7 +357,7 @@
                             d3.select(".state-title").text("");
                             d3.select(".population").text("");
                             d3.select(".productivity").text("");
-                        });;
+                        });;*/
 
         </script>
 	</body>
