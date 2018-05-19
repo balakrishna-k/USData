@@ -203,7 +203,7 @@
                        .data(json.features)
                        .enter()
                        .append("path")
-                       .attr("d", path).attr("stroke","#fff")
+                       .attr("d", path).attr("stroke","#fff").style("opacity", "0.6")
                        .style("fill", function(d) {
                             //Get data value
                             var value = d.properties.productivity;
@@ -221,9 +221,9 @@
                             var productivity = d.properties.productivity;
                             var population = d.properties.population;
                             //console.log(d3.select(this))
-                            /*d3.select(this)
-                                .style("fill", "yellow");
-                        */
+                            d3.select(this)
+                                .style("opacity", "1");
+                        
                             d3.select(".state-title").text(state);
                             if (population){
                                 d3.select(".population").text("Population | " + formatComma(population));
@@ -234,6 +234,9 @@
                         })
                         .on("mouseout", function(d){
                         
+                        
+                            d3.select(this)
+                                .style("opacity", "0.6");
                             /*d3.select(this)
                                 .style("fill", function(d) {
                             //Get data value
