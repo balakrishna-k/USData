@@ -81,7 +81,11 @@
                 transform: translate(107px, 20px);
                 /*visibility: visible;*/
             }
-            .lege
+            
+            .background{
+                opacity: 0;
+            }
+            
 		</style>
 	</head>
 	<body>
@@ -107,6 +111,7 @@
 			//Width and height
 			var w = 800;
 			var h = 400;
+            var active = d3.select(null);
             
             var formatComma = d3.format(",");
             
@@ -118,8 +123,12 @@
 			//Define path generator
 			var path = d3.geoPath()
 							 .projection(projection);
-							 
-            //
+            
+            //console.log(projection);
+            
+            var zoom = d3.zoom()
+                .scaleExtent([1, 8])
+                .on("zoom", zoomed);
             
             var svgLegend = d3.select("body")
 						      .append("svg").attr("class", "svg-legends")
@@ -254,9 +263,19 @@
 			var svg = d3.select("body")
 						.append("svg")
 						.attr("width", w)
-						.attr("height", h);
+						.attr("height", h)
+                        .on("click", stopped, true);
             
-                
+            svg.append("rect")
+                .attr("class", "background")
+                .attr("width", w)
+                .attr("height", h)
+                .on("click", reset);
+
+            var g = svg.append("g");
+
+            svg.call(zoom);
+            
             //Load in agriculture and population data
             d3.csv("data.csv", function(data) {
 
@@ -312,11 +331,12 @@
                     
                     //Bind data and create one path per GeoJSON feature
                     //Default map(the view on page load) will be productivity data
-                    svg.selectAll("path")
+                    g.selectAll("path")
                        .data(json.features)
                        .enter()
                        .append("path")
-                       .attr("d", path).attr("stroke","#fff").style("opacity", "0.8").style("stroke-opacity", "1")
+                       .attr("d", path).on("click", clicked)
+                        .attr("stroke","#fff").attr("stroke-width","1.5").style("opacity", "0.8").style("stroke-opacity", "1")
                        .style("fill", function(d) {
                             //Get data value
                             var value = d.properties.productivity;
@@ -345,7 +365,7 @@
                                 d3.select(".productivity").text("Agricultural Productivity | " + productivity).transition().duration(500).style("opacity", 1);
                             }
                         })
-                        .on("mouseout", function(d){
+                       .on("mouseout", function(d){
                         
                             d3.select(this)
                                 .style("opacity", "0.8");
@@ -374,7 +394,8 @@
                             if (productivity){
                                 d3.select(".productivity").text("Agricultural Productivity | " + productivity).transition().duration(500).style("opacity", 0);
                             }
-                        });
+                        })
+                       //.on("click", clicked);
                 });
 
             });
@@ -389,7 +410,7 @@
                     //console.log(togData);
                     
                     if (togData == true){
-                        svg.selectAll("path")
+                        g.selectAll("path")
                             .transition().duration(1000)
                             .style("fill", function(d) {
                                 var value = d.properties.population;
@@ -423,7 +444,7 @@
                     }
                 
                     if (togData == false){
-                        svg.selectAll("path")
+                        g.selectAll("path")
                             .transition().duration(1000)
                             .style("fill", function(d) {
                                 var value = d.properties.productivity;
@@ -457,6 +478,48 @@
                     }
 
                  });
+            
+                function clicked(d) {
+                  if (active.node() === this) return reset();
+                  active.classed("active", false);
+                  active = d3.select(this).classed("active", true);
+
+                  var bounds = path.bounds(d),
+                      dx = bounds[1][0] - bounds[0][0],
+                      dy = bounds[1][1] - bounds[0][1],
+                      x = (bounds[0][0] + bounds[1][0]) / 2,
+                      y = (bounds[0][1] + bounds[1][1]) / 2,
+                      scale = Math.max(1, Math.min(8, 0.9 / Math.max(dx / w, dy / h))),
+                      translate = [w / 2 - scale * x, h / 2 - scale * y];
+
+                  svg.transition()
+                      .duration(750)
+                      // .call(zoom.translate(translate).scale(scale).event); // not in d3 v4
+                      .call(zoom.transform, d3.zoomIdentity.translate(translate[0],translate[1]).scale(scale) ); // updated for d3 v4
+                }
+
+                function reset() {
+                  active.classed("active", false);
+                  active = d3.select(null);
+
+                  svg.transition()
+                      .duration(750)
+                      // .call( zoom.transform, d3.zoomIdentity.translate(0, 0).scale(1) ); // not in d3 v4
+                      .call( zoom.transform, d3.zoomIdentity ); // updated for d3 v4
+                }
+
+                function zoomed() {
+                  g.style("stroke-width", 1.5 / d3.event.transform.k + "px");
+                  // g.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")"); // not in d3 v4
+                  g.attr("transform", d3.event.transform); // updated for d3 v4
+                }
+
+                // If the drag behavior prevents the default click,
+                // also stop propagation so we don’t click-to-zoom.
+                function stopped() {
+                  if (d3.event.defaultPrevented) d3.event.stopPropagation();
+                }
+            
                 /*.on("mouseover",function(d){
                             var state = d.properties.name;
                             var productivity = d.properties.productivity;
