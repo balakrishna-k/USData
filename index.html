@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<title>D3: Setting path fills dynamically to generate a choropleth</title>
+		<title>United States Choropleth</title>
 		<script type="text/javascript" src="https://d3js.org/d3.v4.min.js"></script>
         <script src="https://d3js.org/d3-color.v1.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.js"></script>
@@ -123,7 +123,7 @@
             
             var svgLegend = d3.select("body")
 						      .append("svg").attr("class", "svg-legends")
-						      .attr("width", w)
+						      .attr("width", w/3)
 						      .attr("height", 180);
                               //.attr("transform", "translate(120,-20)");
             
@@ -192,7 +192,12 @@
             d3.select(".populationLegend").select(".legendTitle").attr("transform", "translate(100,10)");
             d3.select(".productivityLegend").select(".legendTitle").attr("transform", "translate(129,10)");
             
-            d3.select(".populationLegend").attr("visibility", "hidden");
+            d3.select(".state-title").style("opacity", "0");
+            d3.select(".population").style("opacity", "0");
+            d3.select(".productivity").style("opacity", "0");
+            
+            d3.select(".productivityLegend").attr("opacity", "1");
+            d3.select(".populationLegend").attr("opacity", "0");
             
             //Define quantize scale to sort data values into buckets of color
 			
@@ -256,7 +261,7 @@
             d3.csv("data.csv", function(data) {
 
                 //Set input domain for color scale
-                colorAg.domain([
+                /*colorAg.domain([
                     d3.min(data, function(d) { return d.productivity; }), 
                     d3.max(data, function(d) { return d.productivity; })
                 ]);
@@ -264,7 +269,7 @@
                 agLegend.domain([
                     d3.min(data, function(d) { return d.productivity; }), 
                     d3.max(data, function(d) { return d.productivity; })
-                ]);
+                ]);*/
 
                /* colorPop.domain([
                     d3.min(data, function(d) { return d.population; }), 
@@ -332,12 +337,12 @@
                             d3.select(this)
                                 .style("opacity", "1");
                         
-                            d3.select(".state-title").text(state);
+                            d3.select(".state-title").text(state).style("opacity", 0).transition().duration(500).style("opacity", 1);
                             if (population){
-                                d3.select(".population").text("Population | " + formatComma(population));
+                                d3.select(".population").text("Population | " + formatComma(population)).transition().duration(500).style("opacity", 1);
                             }
                             if (productivity){
-                                d3.select(".productivity").text("Agricultural Productivity | " + productivity);
+                                d3.select(".productivity").text("Agricultural Productivity | " + productivity).transition().duration(500).style("opacity", 1);
                             }
                         })
                         .on("mouseout", function(d){
@@ -362,9 +367,13 @@
                             var productivity = d.properties.productivity;
                             var population = d.properties.population;
                             
-                            d3.select(".state-title").text("");
-                            d3.select(".population").text("");
-                            d3.select(".productivity").text("");
+                            d3.select(".state-title").text(state).transition().duration(500).style("opacity", 0);
+                            if (population){
+                                d3.select(".population").text("Population | " + formatComma(population)).transition().duration(500).style("opacity", 0);
+                            }
+                            if (productivity){
+                                d3.select(".productivity").text("Agricultural Productivity | " + productivity).transition().duration(500).style("opacity", 0);
+                            }
                         });
                 });
 
@@ -381,7 +390,7 @@
                     
                     if (togData == true){
                         svg.selectAll("path")
-                            .transition().duration(800)
+                            .transition().duration(1000)
                             .style("fill", function(d) {
                                 var value = d.properties.population;
 
@@ -396,26 +405,26 @@
                                 } 
                          });
                     
-                        d3.select(".populationLegend").attr("visibility", "visible");
-                        d3.select(".productivityLegend").attr("visibility", "hidden");
+                        d3.select(".populationLegend").transition().duration(1000).attr("opacity", "1");
+                        d3.select(".productivityLegend").transition().duration(1000).attr("opacity", "0");
                         
                         d3.select("body")
-                            .transition().duration(800)
+                            .transition().duration(1000)
                             .style("background-color","#381616");
                         
                         d3.select(".toggleData")
-                            .transition().duration(800)
+                            .transition().duration(1000)
                             .style("background-color","#823232");
                         
                         d3.select("h1")
-                            .transition().duration(800)
+                            .transition().duration(1000)
                             .text("United States Population, 2016");
                         
                     }
                 
                     if (togData == false){
                         svg.selectAll("path")
-                            .transition().duration(800)
+                            .transition().duration(1000)
                             .style("fill", function(d) {
                                 var value = d.properties.productivity;
 
@@ -430,19 +439,19 @@
                                 } 
                          });
                     
-                        d3.select(".populationLegend").attr("visibility", "hidden");
-                        d3.select(".productivityLegend").attr("visibility", "visible");
+                       d3.select(".populationLegend").transition().duration(1000).attr("opacity", "0");
+                        d3.select(".productivityLegend").transition().duration(1000).attr("opacity", "1");
                         
                         d3.select("body")
-                            .transition().duration(800)
+                            .transition().duration(1000)
                             .style("background-color","#0c210e");
                         
                         d3.select(".toggleData")
-                            .transition().duration(800)
+                            .transition().duration(1000)
                             .style("background-color","#28682d");
                         
                         d3.select("h1")
-                            .transition().duration(800)
+                            .transition().duration(1000)
                             .text("United States Agricultural Producitivity, 2016");
                         
                     }
