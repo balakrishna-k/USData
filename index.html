@@ -105,11 +105,11 @@
 
             .cities{
                 opacity: 0;
-                fill: white;
+                fill: #f9c85e;
             }
             
             .cityP{
-                
+                color: gold
             }
             
             .state-labels{
@@ -168,6 +168,8 @@
 						      .attr("height", 180);
                               //.attr("transform", "translate(120,-20)");
             
+            //-------------------------------------------------------------------------------------------
+
             // Defining Population Scales
             //-------------------------------------------------------------------------------------------
             
@@ -373,7 +375,7 @@
                        .enter()
                        .append("path")
                        .attr("d", path).attr("class", "feature").on("click", clicked)
-                        .attr("stroke","#fff").attr("stroke-width","0.5").style("opacity", "0.8").style("stroke-opacity", "1")
+                        .attr("stroke","#fff").attr("stroke-width","0.4").style("opacity", "0.8").style("stroke-opacity", "1")
                        .style("fill", function(d) {
                             //Get data value
                             var value = d.properties.productivity;
@@ -656,6 +658,8 @@
             
             d3.select(".toggleCity").on("click", function (){
                 
+                //console.log(d3.selectAll("circle"));
+                
                 togCities = !togCities;
                 
                 if (togData){
@@ -670,14 +674,15 @@
                 
                 
                 if (togCities){
-                    d3.selectAll(".cities").transition().duration(1000).style("opacity",0.9);
+                    d3.selectAll(".cities").transition().duration(1000)
+                        .delay(function (d,i){return 20*i;}).style("opacity",0.9);
                     d3.selectAll(".cities").classed("hidden", false)
                 } else{
-                    d3.selectAll(".cities").transition().duration(1000).style("opacity",0);
+                    d3.selectAll(".cities").transition().duration(1000).delay(function (d,i){return 10*i;}).style("opacity",0);
                     d3.selectAll(".cities").classed("hidden", true)
                 }
                 
-            })
+            });
         
             function clicked(d) {
             
