@@ -57,12 +57,13 @@
             
             .svg-legends{
                 position: absolute;
-                transform: translate(700px,80px);
+                transform: translate(807px,80px);
             }
             
             .populationLegend{
                 width: 200px;
-                transform: translate(135px, 20px);
+                transform: translate(28px, 20px);
+                /*transform: translate(135px, 20px);*/
                 /*visibility: hidden;*/
             }
             
@@ -82,7 +83,8 @@
             
             .productivityLegend{
                 width: 200px;
-                transform: translate(107px, 20px);
+                transform: translate(0px,20px);
+                /*transform: translate(107px, 20px);*/
                 /*visibility: visible;*/
             }
             
@@ -104,6 +106,15 @@
             .cities{
                 opacity: 0;
                 fill: white;
+            }
+            
+            .cityP{
+                
+            }
+            
+            .state-labels{
+                fill: white;
+                pointer-events: none;
             }
             
 		</style>
@@ -334,7 +345,7 @@
                         //Grab data value, and convert from string to float
                         var productivity = parseFloat(data[i].productivity);
                         var population = parseFloat(data[i].population);
-
+                        var code = data[i].abbreviation;
                         //Find the corresponding state inside the GeoJSON
                         for (var j = 0; j < json.features.length; j++) {
 
@@ -345,7 +356,7 @@
                                 //Copy the data value into the JSON
                                 json.features[j].properties.productivity = productivity;
                                 json.features[j].properties.population = population;
-
+                                json.features[j].properties.code = code;
                                 //Stop looking through the JSON
                                 break;
 
@@ -362,7 +373,7 @@
                        .enter()
                        .append("path")
                        .attr("d", path).attr("class", "feature").on("click", clicked)
-                        .attr("stroke","#fff").attr("stroke-width","1.5").style("opacity", "0.8").style("stroke-opacity", "1")
+                        .attr("stroke","#fff").attr("stroke-width","0.5").style("opacity", "0.8").style("stroke-opacity", "1")
                        .style("fill", function(d) {
                             //Get data value
                             var value = d.properties.productivity;
@@ -423,6 +434,109 @@
                             }
                         })
                     
+                    // Adding Labels for each State
+                    g.selectAll("text")
+                       .data(json.features)
+                       .enter()
+                       .append("svg:text").attr("class", "state-labels")
+                       .text(function(d){
+                            if (d.properties.code == "RI" || d.properties.code == "DE"){
+                                return "";
+                            }
+                            return d.properties.code;
+                        })
+                       .attr("x", function(d){
+                            
+//                        if (d.properties.code == "MD"){
+//                            return path.centroid(d)[0] - 3;
+//                        } else if (d.properties.code == "NJ"){
+//                            return path.centroid(d)[0] - 1;
+//                        }
+//                        
+                            return path.centroid(d)[0];
+                        })
+                       .attr("y", function(d){
+//                            if (d.properties.code == "MD"){
+//                                return path.centroid(d)[1] - 2;
+//                            } else if (d.properties.code == "NJ"){
+//                                return path.centroid(d)[1] - 6;
+//                            }
+                            
+                            return  path.centroid(d)[1];
+                        })
+                        .attr("dy", function(d){
+                            // edge cases due to centroid calculation issue
+                            // see: https://github.com/mbostock/d3/pull/1011
+                            // deviations adjusted to test case at map height = 166px
+                            function dy(n) {
+                                return (n * projection.translate()[1]) / h
+                            }
+
+                            switch (d.properties.code)
+                            {   case "FL":
+                                    return dy(30)
+                                case "LA":
+                                    return dy(-10)
+                                case "NH":
+                                    return dy(20)
+                                case "MA":
+                                    return dy(1)
+                                case "DE":
+                                    return dy(5)
+                                case "MD":
+                                    return dy(-4)
+                                case "RI":
+                                    return dy(4)
+                                case "CT":
+                                    return dy(2)
+                                case "NJ":
+                                    return dy(20)
+                                case "DC":
+                                    return dy(-3)
+                                default:
+                                    return 0
+                            }
+
+                        })
+                        .attr("dx", function(d){
+                            // edge cases due to centroid calculation issue
+                            // see: https://github.com/mbostock/d3/pull/1011
+                            // deviations adjusted to test case at map height = 166px
+                            function dx(n) {
+                                return (n * projection.translate()[0]) / w
+                            }
+
+                            switch (d.properties.code)
+                            {   
+                                case "FL":
+                                    return dx(30)
+                                case "LA":
+                                    return dx(-10)
+                                case "NH":
+                                    return dx(3)
+                                case "MA":
+                                    return dx(1)
+                                case "DE":
+                                    return dx(5)
+                                case "MD":
+                                    return dx(-8)
+                                case "RI":
+                                    return dx(4)
+                                case "CT":
+                                    return dx(2)
+                                case "NJ":
+                                    return dx(2)
+                                case "DC":
+                                    return dx(-3)
+                                default:
+                                    return 0
+                            }
+
+                        })
+                       .attr("text-anchor","middle")
+                       .attr('font-size','6pt');
+
+                 
                     
                     d3.csv("us-cities.csv", function(data) {
 						
@@ -596,7 +710,7 @@
                 }
 
             function zoomed() {
-                  g.style("stroke-width", 1.5 / d3.event.transform.k + "px");
+                  g.style("stroke-width", 1 / d3.event.transform.k + "px");
                   // g.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")"); // not in d3 v4
                   g.attr("transform", d3.event.transform); // updated for d3 v4
                 }
