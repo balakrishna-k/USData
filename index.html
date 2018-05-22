@@ -83,7 +83,7 @@
             
             .productivityLegend{
                 width: 200px;
-                transform: translate(0px,20px);
+                transform: translate(16px,20px);
                 /*transform: translate(107px, 20px);*/
                 /*visibility: visible;*/
             }
@@ -197,7 +197,7 @@
 
             var legendPop = d3.legendColor()
                 .labelFormat(d3.format(".0f")).shapePadding(-2).shapeHeight(30)
-                .labels(d3.legendHelpers.thresholdLabels).title('Population')
+                .labels(d3.legendHelpers.thresholdLabels).title('Population in Millions')
                 //.useClass(true)
                 .scale(populationLegend)
 
@@ -213,12 +213,12 @@
             
             var productivityScale = d3.scaleThreshold()
                 //.domain([1000000, 3000000, 7000000, 12000000])  
-              .domain([0.82, 1.033, 1.236, 1.523])
+              .domain([0.8, 1, 1.3, 1.5])
               .range(["#ccece6", "#66c2a4", "#41ae76", "#238b45", "#005824"]);
 
             var productivityLegend = d3.scaleThreshold()
                 //.domain([1000000, 2500000, 7500000, 12500000, 35000000])  
-              .domain([0.82, 1.033, 1.236, 1.523])
+              .domain([0.8, 1, 1.3, 1.5])
               .range(["#ccece6", "#66c2a4", "#41ae76", "#238b45", "#005824"]);
 
         
@@ -227,7 +227,7 @@
               .attr("transform", "translate(20,20)");
 
             var legendProd = d3.legendColor()
-                .labelFormat(d3.format(".3f")).shapePadding(-2).shapeHeight(30)
+                .labelFormat(d3.format(".1f")).shapePadding(-2).shapeHeight(30)
                 .labels(d3.legendHelpers.thresholdLabels).title('Productivity')
                 //.useClass(true)
                 .scale(productivityLegend)
@@ -240,7 +240,7 @@
             //-------------------------------------------------------------------------------------------
 			
             d3.select(".populationLegend").select(".legendTitle").attr("transform", "translate(100,10)");
-            d3.select(".productivityLegend").select(".legendTitle").attr("transform", "translate(129,10)");
+            d3.select(".productivityLegend").select(".legendTitle").attr("transform", "translate(113,10)");
             
             d3.select(".state-title").style("opacity", "0");
             d3.select(".population").style("opacity", "0");
