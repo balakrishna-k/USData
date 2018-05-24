@@ -62,7 +62,7 @@
             
             .populationLegend{
                 width: 200px;
-                transform: translate(28px, 20px);
+                transform: translate(28px, 2px);
                 /*transform: translate(135px, 20px);*/
                 /*visibility: hidden;*/
             }
@@ -70,14 +70,14 @@
             .legendTitle{
                 /*transform: translate(110px,10px);*/
                 font-weight: bolder;
-                font-size: 18px;
+                font-size: 15px;
                 text-anchor: end;
             }
             
             .verticalLine {
-                height: 175px;
+                height: 200px;
                 border-left: thin solid #fff;
-                transform: translate(950px,95px);
+                transform: translate(950px,80px);
                 position: absolute;
             }
             
@@ -116,6 +116,7 @@
                 fill: white;
                 pointer-events: none;
             }
+            
             
 		</style>
 	</head>
@@ -167,7 +168,7 @@
             var svgLegend = d3.select("body")
 						      .append("svg").attr("class", "svg-legends")
 						      .attr("width", w/3)
-						      .attr("height", 180);
+						      .attr("height", 230);
                               //.attr("transform", "translate(120,-20)");
             
             //-------------------------------------------------------------------------------------------
@@ -197,7 +198,7 @@
 
             var legendPop = d3.legendColor()
                 .labelFormat(d3.format(".0f")).shapePadding(-2).shapeHeight(30)
-                .labels(d3.legendHelpers.thresholdLabels).title('Population in Millions')
+                .labels(d3.legendHelpers.thresholdLabels).title('Population in Millions').titleWidth(100)
                 //.useClass(true)
                 .scale(populationLegend)
 
@@ -241,6 +242,8 @@
 			
             d3.select(".populationLegend").select(".legendTitle").attr("transform", "translate(100,10)");
             d3.select(".productivityLegend").select(".legendTitle").attr("transform", "translate(113,10)");
+            
+            //d3.select(".populationLegend").attr("transform", "translate(0,-50)");
             
             d3.select(".state-title").style("opacity", "0");
             d3.select(".population").style("opacity", "0");
@@ -569,6 +572,7 @@
                        //.on("click", clicked);
                 });
 
+            
             });
 
             // Defining Button Interactivity
